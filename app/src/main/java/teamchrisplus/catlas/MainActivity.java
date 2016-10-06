@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
 
                     TextView myTextView = (TextView) findViewById(R.id.my_textView);
-                    myTextView.setText(floor.getName() +room.getName());
+                    myTextView.setText(floor.getName() +" " +room.getName());
                 }
 
             }
