@@ -42,5 +42,12 @@ public class Room {
 	public Rect getRoomRect(){
 		return roomRect;
 	}
+
+	public boolean hasCoordinates(int x, int y) {
+		if(roomRect.contains(x, y))
+			return true;
+		else
+			return false;
+	}
 	
 }

@@ -31,6 +31,8 @@ public class Floor {
 		this.rooms = rooms;
 	}
 
+	public void addRoom(Room room) { this.rooms.add(room); }
+
 	public List<Path> getPaths() {
 		return paths;
 	}
