@@ -7,8 +7,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
+    <teamchrisplus.view.HighlightView
+        android:id="@+id/my_highlightView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-    <TextView
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/floorplan"
+            android:id="@+id/imageView"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true" />
+    </teamchrisplus.view.HighlightView>
+
+    <!--<TextView
         android:id="@+id/my_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,5 +41,5 @@
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
             android:cropToPadding="false" />
-    </HorizontalScrollView>
+    </HorizontalScrollView>-->
 </LinearLayout>
