@@ -21,10 +21,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
-        TextView myTextView = (TextView) findViewById(R.id.my_textView);
-        myTextView.setText("X: " +x +" Y: " +y);
-        return true;
+
+        if(event.getAction() == MotionEvent.ACTION_UP)
+        {
+            float x = event.getX();
+            float y = event.getY();
+            TextView myTextView = (TextView) findViewById(R.id.my_textView);
+            myTextView.setText("X: " + x + " Y: " + y);
+        }
+        return false;
     }
+
 }

@@ -1,16 +1,26 @@
 package teamchrisplus.model;
 
 
+import android.graphics.Rect;
+
 import java.util.List;
 
 public class Room {
 	
 	private String name;
 	private List<String> searchTerms;
-	
-	public Room(String name, List<String> searchTerms) {
+	private Rect roomRect;
+
+	public Room(String name, List<String> searchTerms)
+	{
+		this(name, searchTerms, new Rect(0, 0, 0, 0));
+	}
+
+	public Room(String name, List<String> searchTerms, Rect roomRect)
+	{
 		this.name = name;
 		this.searchTerms = searchTerms;
+		this.roomRect = roomRect;
 	}
 
 	public String getName() {
@@ -27,6 +37,10 @@ public class Room {
 
 	public void setSearchTerms(List<String> searchTerms) {
 		this.searchTerms = searchTerms;
+	}
+
+	public Rect getRoomRect(){
+		return roomRect;
 	}
 	
 }
