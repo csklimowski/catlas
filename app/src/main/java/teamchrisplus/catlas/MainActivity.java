@@ -13,11 +13,12 @@ import teamchrisplus.model.Floor;
 import teamchrisplus.model.Room;
 import teamchrisplus.view.HighlightView;
 
+
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private HighlightView hView;
     private Floor floor;
-
+    private ArrayList<Floor> floorList = new ArrayList<Floor>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         setContentView(R.layout.activity_main);
         hView = (HighlightView) findViewById(R.id.my_highlightView);
         hView.setOnTouchListener(this);
-        floor = new Floor("Gould Simpson : Floor 9 : ", new ArrayList<Room>(), null);
+
+        LoadFloors load = new LoadFloors();
+        floor = load.getFloor("GS Floor 9");
+
+        //floor = new Floor("Gould Simpson : Floor 9 : ", new ArrayList<Room>(), null);
         floor.addRoom(new Room("GS 906", null, new Rect(2060, 812, 2368, 1310)));
         floor.addRoom(new Room("GS 918", null, new Rect(1555, 1139, 1934, 1310)));
         floor.addRoom(new Room("GS 934", null, new Rect(600, 1139, 916, 1310)));
