@@ -25,6 +25,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         float x = event.getX();
         float y = event.getY();
         hView.setRect(x - 200, y - 100, x + 200, y + 100);
-        return true;
+
+        if(event.getAction() == MotionEvent.ACTION_UP)
+        {
+            TextView myTextView = (TextView) findViewById(R.id.my_textView);
+            myTextView.setText("X: " + x + " Y: " + y);
+        }
+        return false;
     }
+
 }
