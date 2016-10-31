@@ -70,6 +70,10 @@ public class RoomDetailsActivity extends AppCompatActivity {
         DBManager db = new DBManager(this); //Reference to the database
         DBRoom r = new DBRoom(); //Create the room object for the room to be added
 
+        //Check if all the fields have been filled out.
+        if(!checkFields())
+            return;
+
         //Set all the room properties from the fields
         r.set_id(room.get_id());
         r.set_building(editText_building.getText().toString());
@@ -88,6 +92,10 @@ public class RoomDetailsActivity extends AppCompatActivity {
         DBManager db = new DBManager(this); //Reference to the database
         DBRoom r = new DBRoom(); //Create the room object for the room to be added
 
+        //Check if all the fields have been filled out.
+        if(!checkFields())
+            return;
+
         //Set all the room properties from the fields
         r.set_building(editText_building.getText().toString());
         r.set_floor(Integer.parseInt(editText_floor.getText().toString()));
@@ -98,6 +106,21 @@ public class RoomDetailsActivity extends AppCompatActivity {
         //Insert the new room into the database
         db.insertRoom(r);
         finish();
+    }
+
+    private boolean checkFields()
+    {
+        if(editText_building.getText().length() == 0)
+            return false;
+        if(editText_floor.getText().length() == 0)
+            return false;
+        if(editText_name.getText().length() == 0)
+            return false;
+        if(editText_number.getText().length() == 0)
+            return false;
+        if(editText_coordinates.getText().length() == 0)
+            return false;
+        return true;
     }
 
 }

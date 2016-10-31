@@ -48,8 +48,10 @@ public class DBManager extends SQLiteOpenHelper{
             contentValues.put(NUMBER, room.get_number());
             contentValues.put(COORDINATES, room.get_coordinates());
             db.insert(TABLE, null, contentValues);
+            db.close();
             return true;
         }catch(Exception e){
+            db.close();
             return false;
         }
     }
@@ -66,8 +68,10 @@ public class DBManager extends SQLiteOpenHelper{
             contentValues.put(NUMBER, room.get_number());
             contentValues.put(COORDINATES, room.get_coordinates());
             db.update(TABLE, contentValues, "id = ?", new String[]{String.valueOf(room.get_id())});
+            db.close();
             return true;
         }catch(Exception e){
+            db.close();
             return false;
         }
     }
@@ -93,8 +97,10 @@ public class DBManager extends SQLiteOpenHelper{
                 rooms.add(room);
                 cur.moveToNext();
             }
+            db.close();
             return rooms;
         }catch(Exception e){
+            db.close();
             System.out.println("ERROR selecting rooms from database");
             return null;
         }
