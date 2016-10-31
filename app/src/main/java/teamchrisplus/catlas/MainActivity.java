@@ -130,19 +130,19 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int x = (int) event.getX() + hView.getScrollX();
+        int absoluteX = (int) event.getX() + hView.getScrollX();
+        int relativeX = (int) event.getX();
         int y = (int) event.getY();
         Rect currentRect;
         boolean inRoom = false;
         FloorNode selectedNode;
         Stack<FloorNode> path;
         if(event.getAction() == MotionEvent.ACTION_UP) {
-
             for (DBRoom room : floor.getRooms()) {
                 if (room.hasCoordinates((int) x, (int) y)) {
                     inRoom = true;
                     currentRect = room.getRoomRect();
                     hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
-
                     selectRoom(x, y);
                     showPopupWindow(room);
                 }
