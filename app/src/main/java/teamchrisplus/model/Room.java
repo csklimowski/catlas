@@ -39,6 +39,13 @@ public class Room {
 		this.searchTerms = searchTerms;
 	}
 
+	/*
+		Returns the info necessary for a room's PopupWindow. Right now, this is just the name.
+	 */
+	public String getPopupInfo() {
+		return name;
+	}
+
 	public Rect getRoomRect(){
 		return roomRect;
 	}

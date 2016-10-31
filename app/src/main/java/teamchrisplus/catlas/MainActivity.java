@@ -1,11 +1,15 @@
 package teamchrisplus.catlas;
 
+import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.PopupWindow;
 
 import java.util.ArrayList;
 
@@ -42,21 +46,29 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        float x = event.getX() + hView.getScrollX();
-        float y = event.getY();
+        int absoluteX = (int) event.getX() + hView.getScrollX();
+        int relativeX = (int) event.getX();
+        int y = (int) event.getY();
         Rect currentRect;
         boolean inRoom = false;
         
         if(event.getAction() == MotionEvent.ACTION_UP) {
 
             for(Room room : floor.getRooms()) {
-                if(room.hasCoordinates((int) x, (int) y)) {
+                if(room.hasCoordinates(absoluteX, y)) {
                     inRoom = true;
                     currentRect = room.getRoomRect();
                     hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
 
-                    TextView myTextView = (TextView) findViewById(R.id.my_textView);
-                    myTextView.setText(floor.getName() +" " +room.getName());
+                    // Generate popup window
+                    LayoutInflater inflater = (LayoutInflater)
+                            this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    PopupWindow pw = new PopupWindow(
+                            inflater.inflate(R.layout.room_popup, null, false),
+                            300,
+                            300,
+                            true);
+                    pw.showAtLocation(v, Gravity.CENTER, relativeX, y);
                 }
 
             }
