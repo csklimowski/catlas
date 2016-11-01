@@ -309,10 +309,14 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     *
     */
     private void searchRooms(String query) {
-        System.out.println("test");
         query = query.toLowerCase();
         for(final DBRoom room : floor.getRooms()) {
+            System.out.println(room.get_name());
             if (room.get_name().toLowerCase().contains(query)) {
+                Rect currentRect = room.getRoomRect();
+                hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
+                hView.scrollTo(currentRect.left - 100, 0);
+                selectNode(room.getCenterX(), room.getCenterY());
                 showPopupWindow(room);
                 break;
             }
