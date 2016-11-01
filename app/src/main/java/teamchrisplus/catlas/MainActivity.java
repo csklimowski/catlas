@@ -125,38 +125,46 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public boolean onTouch(View v, MotionEvent event) {
         float x = event.getX() + hView.getScrollX();
         float y = event.getY();
-        Rect currentRect;
-        boolean inRoom = false;
-        FloorNode selectedNode;
-        Stack<FloorNode> path;
+
         if(event.getAction() == MotionEvent.ACTION_UP) {
-
-            for(Room room : floor.getRooms()) {
-                if(room.hasCoordinates((int) x, (int) y)) {
-                    inRoom = true;
-                    currentRect = room.getRoomRect();
-                    hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
-
-                    TextView myTextView = (TextView) findViewById(R.id.my_textView);
-                    myTextView.setText(floor.getName() +room.getName());
-                }
-
-            }
-
-            if(!inRoom) {
-                hView.setRect(0, 0, 0, 0);
-
-            }
-
-            selectedNode = floor.findNode((int) x, (int) y);
-            if(selectedNode != null) {
-                floor.findShortestPath(sourceNode, selectedNode);
-                hView.setDestinationNode(selectedNode);
-            }
-
-
+            selectRoom((int)x, (int)y);
+            selectNode((int)x, (int)y);
         }
         return false;
+    }
+
+    public void selectRoom(int x, int y) {
+        Rect currentRect;
+        boolean inRoom = false;
+
+        for(Room room : floor.getRooms()) {
+            if(room.hasCoordinates((int) x, (int) y)) {
+                inRoom = true;
+                currentRect = room.getRoomRect();
+                hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
+
+                TextView myTextView = (TextView) findViewById(R.id.my_textView);
+                myTextView.setText(floor.getName() +room.getName());
+            }
+
+        }
+
+        if(!inRoom)
+            hView.setRect(0, 0, 0, 0);
+    }
+
+    public void selectNode(int x, int y) {
+        FloorNode selectedNode = floor.findNode( x, y);
+        if(selectedNode != null) {
+            setDestinationNode(selectedNode);
+        }
+    }
+
+    public void setDestinationNode(FloorNode node) {
+        if(node != null) {
+            floor.findShortestPath(sourceNode, node);
+            hView.setDestinationNode(node);
+        }
     }
 
     @Override
