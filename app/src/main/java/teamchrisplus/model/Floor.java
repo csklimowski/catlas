@@ -35,14 +35,6 @@ public class Floor {
 
 	public void findShortestPath(FloorNode source, FloorNode destination) {
 		graph.initPaths(source, destination);
-		/*Stack<FloorNode> path = new Stack<FloorNode>();
-		FloorNode currentNode = destination;
-		while(currentNode != null) {
-			path.push(currentNode);
-			currentNode = currentNode.getPrevNode();
-		}
-
-		return path;*/
 	}
 
     public FloorNode findNode(int x, int y) {
