@@ -22,7 +22,6 @@ public class DBManager extends SQLiteOpenHelper{
     public DBManager(Context context)
     {
         super(context, DATABASE, null, 1);
-        populate();
     }
 
 
@@ -38,7 +37,7 @@ public class DBManager extends SQLiteOpenHelper{
     }
 
 
-    private boolean populate()
+    public boolean populate()
     {
         SQLiteDatabase db = this.getWritableDatabase();
         System.out.println("There are " + getAllRooms().size() + " rooms in the database");

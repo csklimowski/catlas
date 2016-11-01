@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         //floor = load.getFloor("GS Floor 9");
 
         DBManager db = new DBManager(this);
+        db.populate();
         ArrayList<DBRoom> rooms = db.getAllRooms();
         db.close();
 
