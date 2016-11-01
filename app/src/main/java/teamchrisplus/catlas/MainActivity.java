@@ -254,6 +254,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             case R.id.menu_room_list:
                 startActivity(new Intent(MainActivity.this, RoomDBActivity.class));
                 break;
+            case R.id.search_rooms:
+                // search for rooms
+                break;
         }
 
         return super.onOptionsItemSelected(item);
