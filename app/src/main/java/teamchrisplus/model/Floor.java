@@ -1,16 +1,15 @@
 package teamchrisplus.model;
 
 import java.util.List;
-import java.util.Stack;
 
 
 public class Floor {
 	
 	private String name;
-	private List<Room> rooms;
+	private List<DBRoom> rooms;
 	private FloorGraph graph;
 	
-	public Floor(String name, List<Room> rooms, FloorGraph graph) {
+	public Floor(String name, List<DBRoom> rooms, FloorGraph graph) {
 		this.name = name;
 		this.rooms = rooms;
 		this.graph = graph;
@@ -24,15 +23,15 @@ public class Floor {
 		this.name = name;
 	}
 
-	public List<Room> getRooms() {
+	public List<DBRoom> getRooms() {
 		return rooms;
 	}
 
-	public void setRooms(List<Room> rooms) {
+	public void setRooms(List<DBRoom> rooms) {
 		this.rooms = rooms;
 	}
 
-	public void addRoom(Room room) { this.rooms.add(room); }
+	public void addRoom(DBRoom room) { this.rooms.add(room); }
 
 	public void findShortestPath(FloorNode source, FloorNode destination) {
 		graph.initPaths(source, destination);
