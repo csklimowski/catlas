@@ -1,8 +1,11 @@
 package teamchrisplus.catlas;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -76,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         boolean inRoom = false;
         FloorNode selectedNode;
         Stack<FloorNode> path;
-        
         if(event.getAction() == MotionEvent.ACTION_UP) {
 
             /*for(Room room : floor.getRooms()) {
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
 
                     TextView myTextView = (TextView) findViewById(R.id.my_textView);
-                    myTextView.setText(floor.getName() +" " +room.getName());
+                    myTextView.setText(floor.getName() +room.getName());
                 }
 
             }
@@ -106,6 +108,25 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         }
         return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.room_list_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        System.out.println("I tried to open the menu");
+        switch(item.getItemId()){
+            case R.id.menu_room_list:
+                startActivity(new Intent(MainActivity.this, RoomDBActivity.class));
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }
