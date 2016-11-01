@@ -1,11 +1,5 @@
 package teamchrisplus.catlas;
 
-/**
- * Created by christophergrundy on 10/5/16.
- */
-
-import android.graphics.Rect;
-
 import teamchrisplus.model.*;
 import java.util.*;
 
@@ -15,11 +9,11 @@ public class LoadFloors {
 
     public LoadFloors()
     {
-        Floor gsFloor9 = new Floor("GS Floor 9", new ArrayList<Room>(), new FloorGraph());
+        Floor gsFloor9 = new Floor("GS Floor 9", new ArrayList<DBRoom>(), new FloorGraph());
         floorList.add(gsFloor9);
     }
 
-    public boolean addRoom(String floorName, Room room)
+    public boolean addRoom(String floorName, DBRoom room)
     {
         floorName = floorName.toLowerCase();
         for(int i = 0; i < floorList.size(); i++)
@@ -41,7 +35,7 @@ public class LoadFloors {
         return floorList;
     }
 
-    public List<Room> getRoomList(String floorName)
+    public List<DBRoom> getRoomList(String floorName)
     {
         floorName = floorName.toLowerCase();
         for(int i = 0; i < floorList.size(); i++)

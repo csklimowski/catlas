@@ -13,10 +13,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import teamchrisplus.model.DBRoom;
 import teamchrisplus.model.Floor;
 import teamchrisplus.model.FloorGraph;
 import teamchrisplus.model.FloorNode;
-import teamchrisplus.model.Room;
+import teamchrisplus.model.DBRoom;
 import teamchrisplus.view.HighlightView;
 
 
@@ -38,12 +39,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         LoadFloors load = new LoadFloors();
         //floor = load.getFloor("GS Floor 9");
 
-        ArrayList<Room> rooms = new ArrayList<>();
-        rooms.add(new Room("GS 906", null, new Rect(2060, 812, 2368, 1310)));
-        rooms.add(new Room("GS 918", null, new Rect(1555, 1139, 1934, 1310)));
-        rooms.add(new Room("GS 934", null, new Rect(600, 1139, 916, 1310)));
-        rooms.add(new Room("GS 938", null, new Rect(600, 971, 916, 1139)));
-        rooms.add(new Room("GS 942", null, new Rect(600, 815, 916, 971)));
+        DBManager db = new DBManager(this);
+        ArrayList<DBRoom> rooms = db.getAllRooms();
+        db.close();
 
         FloorGraph graph = new FloorGraph();
 
@@ -136,17 +134,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public void selectRoom(int x, int y) {
         Rect currentRect;
         boolean inRoom = false;
-
-        for(Room room : floor.getRooms()) {
+        for(DBRoom room : floor.getRooms()) {
             if(room.hasCoordinates((int) x, (int) y)) {
                 inRoom = true;
                 currentRect = room.getRoomRect();
                 hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
 
                 TextView myTextView = (TextView) findViewById(R.id.my_textView);
-                myTextView.setText(floor.getName() +room.getName());
+                myTextView.setText(floor.getName() +room.get_name());
             }
-
         }
 
         if(!inRoom)
@@ -176,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        System.out.println("I tried to open the menu");
         switch(item.getItemId()){
             case R.id.menu_room_list:
                 startActivity(new Intent(MainActivity.this, RoomDBActivity.class));
