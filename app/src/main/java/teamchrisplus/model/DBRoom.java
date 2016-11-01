@@ -88,6 +88,21 @@ public class DBRoom {
             return false;
     }
 
+    public int getCenterX() {
+        return roomRect.centerX();
+    }
+
+    public int getCenterY() {
+        return roomRect.centerY();
+    }
+
+    /*
+    * Returns the info necessary for a room's PopupWindow. Right now, this is just the name.
+    */
+    public String getPopupInfo() {
+        return _name;
+    }
+
     public String get_coordinates() {
         return _coordinates;
     }

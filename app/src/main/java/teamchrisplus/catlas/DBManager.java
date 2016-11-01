@@ -28,7 +28,6 @@ public class DBManager extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table if not exists "+TABLE+" (id integer primary key, "+BUILDING+" text, "+FLOOR+" integer, "+NAME+" text, "+NUMBER+" integer, "+COORDINATES+" text)");
-        populate();
     }
 
 
@@ -38,10 +37,11 @@ public class DBManager extends SQLiteOpenHelper{
     }
 
 
-    private boolean populate()
+    public boolean populate()
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        if(getAllRooms().size() == 0) {
+        System.out.println("There are " + getAllRooms().size() + " rooms in the database");
+        if(getAllRooms().size() < 1) {
             insertRoom(new DBRoom("Gould Simpson", 9, "GS 906", 906, "2060 812 2368 1310"));
             insertRoom(new DBRoom("Gould Simpson", 9, "GS 918", 918, "1555 1139 1934 1310"));
             insertRoom(new DBRoom("Gould Simpson", 9, "GS 934", 934, "600 1139 916 1310"));
@@ -76,7 +76,7 @@ public class DBManager extends SQLiteOpenHelper{
     }
 
 
-    //This method is used to insert a new room into the database
+    //This method is used to update a room in the database
     public boolean updateRoom(DBRoom room){
         SQLiteDatabase db = this.getWritableDatabase(); //Get a reference to the database
         ContentValues contentValues = new ContentValues();
@@ -87,6 +87,20 @@ public class DBManager extends SQLiteOpenHelper{
             contentValues.put(NUMBER, room.get_number());
             contentValues.put(COORDINATES, room.get_coordinates());
             db.update(TABLE, contentValues, "id = ?", new String[]{String.valueOf(room.get_id())});
+            db.close();
+            return true;
+        }catch(Exception e){
+            db.close();
+            return false;
+        }
+    }
+
+
+    //This method is used to delete a room from the database
+    public boolean deleteRoom(DBRoom room){
+        SQLiteDatabase db = this.getWritableDatabase(); //Get a reference to the database
+        try{
+            db.delete(TABLE, "id = ?", new String[]{String.valueOf(room.get_id())});
             db.close();
             return true;
         }catch(Exception e){

@@ -1,6 +1,7 @@
 package teamchrisplus.model;
 
 
+import android.graphics.Point;
 import android.graphics.Rect;
 
 import java.util.List;
@@ -37,6 +38,21 @@ public class Room {
 
 	public void setSearchTerms(List<String> searchTerms) {
 		this.searchTerms = searchTerms;
+	}
+
+	/*
+		Returns the info necessary for a room's PopupWindow. Right now, this is just the name.
+	 */
+	public String getPopupInfo() {
+		return name;
+	}
+
+	public int getCenterX() {
+		return roomRect.centerX();
+	}
+
+	public int getCenterY() {
+		return roomRect.centerY();
 	}
 
 	public Rect getRoomRect(){

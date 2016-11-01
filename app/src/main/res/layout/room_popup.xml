@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/room_popup"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="10sp"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffffff"
+    >
+
+    <TextView
+        android:id="@+id/popup_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dip"
+        android:layout_marginBottom="10dip"
+        android:layout_gravity="center"
+        android:background="#FFF"
+        android:text="Room Name"
+        android:textColor="#000"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="16dp"
+        />
+
+    <Button android:id="@+id/start_button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:text="Start"/>
+
+    <Button android:id="@+id/route_button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:text="Route"/>
+
+</LinearLayout>
