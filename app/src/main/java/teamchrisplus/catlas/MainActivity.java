@@ -7,6 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.content.Intent;
+import android.graphics.Rect;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -53,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         int y = (int) event.getY();
         Rect currentRect;
         boolean inRoom = false;
-        
+
         if(event.getAction() == MotionEvent.ACTION_UP) {
 
             for(Room room : floor.getRooms()) {
@@ -116,6 +122,26 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         // Display the window @ Room's center
         pw.showAtLocation(hView, Gravity.CENTER, x, y);
         pw.update(x - hView.getScrollX(), y, 300, 300);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.room_list_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        System.out.println("I tried to open the menu");
+        switch(item.getItemId()){
+            case R.id.menu_room_list:
+                startActivity(new Intent(MainActivity.this, RoomDBActivity.class));
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }
