@@ -28,12 +28,31 @@ public class DBManager extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table if not exists "+TABLE+" (id integer primary key, "+BUILDING+" text, "+FLOOR+" integer, "+NAME+" text, "+NUMBER+" integer, "+COORDINATES+" text)");
+        populate();
     }
 
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+    }
+
+
+    private boolean populate()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        if(getAllRooms().size() == 0) {
+            insertRoom(new DBRoom("Gould Simpson", 9, "GS 906", 906, "2060 812 2368 1310"));
+            insertRoom(new DBRoom("Gould Simpson", 9, "GS 918", 918, "1555 1139 1934 1310"));
+            insertRoom(new DBRoom("Gould Simpson", 9, "GS 934", 934, "600 1139 916 1310"));
+            insertRoom(new DBRoom("Gould Simpson", 9, "GS 938", 938, "600 971 916 1139"));
+            insertRoom(new DBRoom("Gould Simpson", 9, "GS 942", 942, "600 815 916 971"));
+            db.close();
+        }else{
+            db.close();
+            return false;
+        }
+        return true;
     }
 
 
