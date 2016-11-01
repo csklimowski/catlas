@@ -87,16 +87,16 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     * Author: Miranda Motsinger
     */
     private void showPopupWindow(Room room) {
-        int x = room.getCenterX();
-        int y = room.getCenterY();
+        int x = room.getCenterX() - 150 - hView.getScrollX();
+        int y = room.getCenterY() - 50;
 
         // Set up the layour and initialize the PopupWindow
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.room_popup, (ViewGroup) findViewById(R.id.room_popup));
         PopupWindow pw = new PopupWindow(
                 layout,
-                600,
-                600,
+                300,
+                300,
                 true
         );
 
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         // Display the window @ Room's center
         pw.showAtLocation(layout, Gravity.CENTER, x, y);
-        pw.update(x - hView.getScrollX(), y, 300, 300);
+        pw.update(x, y, 300, 300);
 
     }
 
