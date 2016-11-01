@@ -145,22 +145,43 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     showPopupWindow(room);
                 }
 
-            }
-
-            if(!inRoom) {
-                hView.setRect(0, 0, 0, 0);
-
-            }
-
-            selectedNode = floor.findNode((int) x, (int) y);
-            if(selectedNode != null) {
-                floor.findShortestPath(sourceNode, selectedNode);
-                hView.setDestinationNode(selectedNode);
-            }
-
-
+        if(event.getAction() == MotionEvent.ACTION_UP) {
+            selectRoom((int)x, (int)y);
+            selectNode((int)x, (int)y);
         }
         return false;
+    }
+
+    public void selectRoom(int x, int y) {
+        Rect currentRect;
+        boolean inRoom = false;
+        for(DBRoom room : floor.getRooms()) {
+            if(room.hasCoordinates((int) x, (int) y)) {
+                inRoom = true;
+                currentRect = room.getRoomRect();
+                hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
+
+                TextView myTextView = (TextView) findViewById(R.id.my_textView);
+                myTextView.setText(floor.getName() +room.get_name());
+            }
+        }
+
+        if(!inRoom)
+            hView.setRect(0, 0, 0, 0);
+    }
+
+    public void selectNode(int x, int y) {
+        FloorNode selectedNode = floor.findNode( x, y);
+        if(selectedNode != null) {
+            setDestinationNode(selectedNode);
+        }
+    }
+
+    public void setDestinationNode(FloorNode node) {
+        if(node != null) {
+            floor.findShortestPath(sourceNode, node);
+            hView.setDestinationNode(node);
+        }
     }
 
     /*
