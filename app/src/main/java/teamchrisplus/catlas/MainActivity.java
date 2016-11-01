@@ -136,18 +136,21 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         Stack<FloorNode> path;
         if(event.getAction() == MotionEvent.ACTION_UP) {
 
-            for(DBRoom room : floor.getRooms()) {
-                if(room.hasCoordinates((int) x, (int) y)) {
+            for (DBRoom room : floor.getRooms()) {
+                if (room.hasCoordinates((int) x, (int) y)) {
                     inRoom = true;
                     currentRect = room.getRoomRect();
                     hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
 
+                    selectRoom(x, y);
                     showPopupWindow(room);
                 }
+            }
+        }
 
         if(event.getAction() == MotionEvent.ACTION_UP) {
-            selectRoom((int)x, (int)y);
-            selectNode((int)x, (int)y);
+            selectRoom(x, y);
+            selectNode(x, y);
         }
         return false;
     }
@@ -156,29 +159,32 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         Rect currentRect;
         boolean inRoom = false;
         for(DBRoom room : floor.getRooms()) {
-            if(room.hasCoordinates((int) x, (int) y)) {
+            if(room.hasCoordinates(x, y)) {
                 inRoom = true;
                 currentRect = room.getRoomRect();
                 hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
 
-                TextView myTextView = (TextView) findViewById(R.id.my_textView);
-                myTextView.setText(floor.getName() +room.get_name());
+                showPopupWindow(room);
             }
         }
 
-        if(!inRoom)
+        if(!inRoom) {
             hView.setRect(0, 0, 0, 0);
+            hView.setDestinationNode(null);
+        }
     }
 
     public void selectNode(int x, int y) {
         FloorNode selectedNode = floor.findNode( x, y);
         if(selectedNode != null) {
+            Log.d("yo", "we found it");
             setDestinationNode(selectedNode);
         }
     }
 
     public void setDestinationNode(FloorNode node) {
         if(node != null) {
+            destinationNode = node;
             floor.findShortestPath(sourceNode, node);
             hView.setDestinationNode(node);
         }
@@ -191,34 +197,44 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     * Author: Miranda Motsinger
     */
     private void showPopupWindow(DBRoom room) {
+        final int roomX = room.getCenterX();
+        final int roomY = room.getCenterY();
         int x = room.getCenterX() - 150 - hView.getScrollX();
         int y = room.getCenterY() - 50;
 
         // Set up the layour and initialize the PopupWindow
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.room_popup, (ViewGroup) findViewById(R.id.room_popup));
         PopupWindow pw = new PopupWindow(
-                layout,
-                300,
-                300,
+                inflater.inflate(R.layout.room_popup, (ViewGroup) findViewById(R.id.room_popup)),
+                400,
+                500,
                 true
         );
+        pw.setFocusable(true);
 
         // Set PopupWindow's text to Room's info
         ((TextView) pw.getContentView().findViewById(R.id.popup_text_view)).setText(room.getPopupInfo());
 
         // Add Button and listener
-        Button button = (Button) layout.findViewById(R.id.route_button);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button routeButton = (Button) pw.getContentView().findViewById(R.id.route_button);
+        routeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("yeahboi", "clicked the button");
+                selectNode(roomX, roomY);
+                setDestinationNode(destinationNode);
+            }
+        });
+        Button startButton = (Button) pw.getContentView().findViewById(R.id.start_button);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sourceNode = floor.findNode(roomX, roomY);
             }
         });
 
         // Display the window @ Room's center
-        pw.showAtLocation(layout, Gravity.CENTER, x, y);
-        pw.update(x, y, 300, 300);
+        pw.showAtLocation(hView, Gravity.CENTER, x, y);
+        pw.update(x, y, 400, 450);
 
     }
 
