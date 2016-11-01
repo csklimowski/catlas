@@ -4,12 +4,12 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.content.Intent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +25,7 @@ import teamchrisplus.model.Floor;
 import teamchrisplus.model.FloorGraph;
 import teamchrisplus.model.FloorNode;
 import teamchrisplus.model.DBRoom;
+import teamchrisplus.model.Room;
 import teamchrisplus.view.HighlightView;
 
 
@@ -248,13 +249,49 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_room_list:
                 startActivity(new Intent(MainActivity.this, RoomDBActivity.class));
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /*
+    * Creates a PopupWindow at a specified Room, which shows that Room's information
+    * and provides a Button for routing to that room. Also clears an existing window.
+    *
+    * Author: Miranda Motsinger
+    */
+    private void showPopupWindow(Room room) {
+        int x = room.getCenterX();
+        int y = room.getCenterY();
+
+        // Set up the layour and initialize the PopupWindow
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        PopupWindow pw = new PopupWindow(
+                inflater.inflate(R.layout.room_popup, null, false),
+                300,
+                300,
+                true
+        );
+
+        // Set PopupWindow's text to Room's info
+        ((TextView) pw.getContentView().findViewById(R.id.popup_text_view)).setText(room.getPopupInfo());
+
+        // Add Button and listener
+        Button button = (Button) pw.getContentView().findViewById(R.id.route_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("yeahboi", "clicked the button");
+            }
+        });
+
+        // Display the window @ Room's center
+        pw.showAtLocation(hView, Gravity.CENTER, x, y);
+        pw.update(x - hView.getScrollX(), y, 300, 300);
     }
 
 }
