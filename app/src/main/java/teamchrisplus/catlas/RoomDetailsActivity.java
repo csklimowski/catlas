@@ -17,6 +17,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
     private EditText editText_coordinates;
     private Button button_save;
     private Button button_update;
+    private Button button_delete;
     private DBRoom room;
 
     @Override
@@ -30,6 +31,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
         editText_coordinates = (EditText) findViewById(R.id.editText_coordinates);
         button_save = (Button) findViewById(R.id.button_save);
         button_update = (Button) findViewById(R.id.button_update);
+        button_delete = (Button) findViewById(R.id.button_delete);
 
         Bundle b2 = getIntent().getExtras();
         if(b2 != null)
@@ -46,6 +48,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
             button_save.setVisibility(View.INVISIBLE);
         }else{
             button_update.setVisibility(View.INVISIBLE);
+            button_delete.setVisibility(View.INVISIBLE);
         }
 
 
@@ -63,6 +66,35 @@ public class RoomDetailsActivity extends AppCompatActivity {
             }
         });
 
+        button_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteRoom();
+            }
+        });
+
+    }
+
+    private void deleteRoom()
+    {
+        DBManager db = new DBManager(this); //Reference to the database
+        DBRoom r = new DBRoom(); //Create the room object for the room to be added
+
+        //Check if all the fields have been filled out.
+        if(!checkFields())
+            return;
+
+        //Set all the room properties from the fields
+        r.set_id(room.get_id());
+        r.set_building(editText_building.getText().toString());
+        r.set_floor(Integer.parseInt(editText_floor.getText().toString()));
+        r.set_name(editText_name.getText().toString());
+        r.set_number(Integer.parseInt(editText_number.getText().toString()));
+        r.set_coordinates(editText_coordinates.getText().toString());
+
+        //Insert the new room into the database
+        db.deleteRoom(r);
+        finish();
     }
 
     private void updateRoom()
