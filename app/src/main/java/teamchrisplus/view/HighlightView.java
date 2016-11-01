@@ -23,6 +23,8 @@ public class HighlightView extends HorizontalScrollView {
     private Path highlightPath = new Path();
     private FloorNode destinationNode = null;
 
+    private static final int PATH_STROKE_WIDTH = 8;
+
     public HighlightView(Context context) {
         super(context);
     }
@@ -78,8 +80,8 @@ public class HighlightView extends HorizontalScrollView {
         paint.setColor(Color.parseColor("#10D070"));
         canvas.drawPath(highlightPath, paint);
 
-        paint.setColor(Color.BLACK);
-        paint.setStrokeWidth(10);
+        paint.setColor(Color.BLUE);
+        paint.setStrokeWidth(PATH_STROKE_WIDTH);
         if(destinationNode != null)
             drawEdges(paint, canvas);
     }
