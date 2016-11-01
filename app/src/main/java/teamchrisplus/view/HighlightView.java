@@ -5,8 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.widget.HorizontalScrollView;
+
+import java.util.Stack;
+
+import teamchrisplus.model.FloorNode;
 
 /**
  * TODO: document your custom view class.
@@ -16,6 +21,9 @@ public class HighlightView extends HorizontalScrollView {
 
     private Paint paint = new Paint();
     private Path highlightPath = new Path();
+    private FloorNode destinationNode = null;
+
+    private static final int PATH_STROKE_WIDTH = 8;
 
     public HighlightView(Context context) {
         super(context);
@@ -27,6 +35,10 @@ public class HighlightView extends HorizontalScrollView {
 
     public HighlightView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    public void setDestinationNode(FloorNode destinationNode) {
+        this.destinationNode = destinationNode;
     }
 
     public void setRect(float x1, float y1, float x2, float y2) {
@@ -49,10 +61,28 @@ public class HighlightView extends HorizontalScrollView {
         invalidate();
     }
 
+    public void drawEdges(Paint paint, Canvas canvas) {
+        FloorNode currentSource = null;
+        FloorNode currentDestination = destinationNode;
+
+        while(currentDestination.getPrevNode() != null) {
+            currentSource = currentDestination;
+            currentDestination = currentSource.getPrevNode();
+            canvas.drawLine(currentSource.getX(), currentSource.getY(),
+                    currentDestination.getX(), currentDestination.getY(), paint);
+        }
+        invalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         paint.setColor(Color.parseColor("#10D070"));
         canvas.drawPath(highlightPath, paint);
+
+        paint.setColor(Color.BLUE);
+        paint.setStrokeWidth(PATH_STROKE_WIDTH);
+        if(destinationNode != null)
+            drawEdges(paint, canvas);
     }
 }

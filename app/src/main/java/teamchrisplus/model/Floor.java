@@ -1,18 +1,19 @@
 package teamchrisplus.model;
 
 import java.util.List;
+import java.util.Stack;
 
 
 public class Floor {
 	
 	private String name;
 	private List<Room> rooms;
-	private List<Path> paths;
+	private FloorGraph graph;
 	
-	public Floor(String name, List<Room> rooms, List<Path> paths) {
+	public Floor(String name, List<Room> rooms, FloorGraph graph) {
 		this.name = name;
 		this.rooms = rooms;
-		this.paths = paths;
+		this.graph = graph;
 	}
 
 	public String getName() {
@@ -33,25 +34,24 @@ public class Floor {
 
 	public void addRoom(Room room) { this.rooms.add(room); }
 
-	public List<Path> getPaths() {
-		return paths;
+	public void findShortestPath(FloorNode source, FloorNode destination) {
+		graph.initPaths(source, destination);
+		/*Stack<FloorNode> path = new Stack<FloorNode>();
+		FloorNode currentNode = destination;
+		while(currentNode != null) {
+			path.push(currentNode);
+			currentNode = currentNode.getPrevNode();
+		}
+
+		return path;*/
 	}
 
-	public void setPaths(List<Path> paths) {
-		this.paths = paths;
-	}
-	
-	/**
-	 * Eventually will find the shortest series of paths between Room start
-	 * and Room end and return it in a List. Right now, it just returns a 
-	 * list containing only paths.get(0).
-	 * 
-	 * @param Room start
-	 * @param Room end
-	 * @return list of Paths
-	 */
-	public List<Path> findShortestPath(Room start, Room end) {
-		return paths.subList(0, 1);
-	}
-	
+    public FloorNode findNode(int x, int y) {
+        for(FloorNode node : graph.getNodes()) {
+            if (node.hasCoordinates(x, y))
+                return node;
+        }
+
+        return null;
+    }
 }
