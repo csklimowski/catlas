@@ -15,7 +15,7 @@ public class LoadFloors {
 
     public LoadFloors()
     {
-        Floor gsFloor9 = new Floor("GS Floor 9", new ArrayList<Room>(), new ArrayList<Path>());
+        Floor gsFloor9 = new Floor("GS Floor 9", new ArrayList<Room>(), new FloorGraph());
         floorList.add(gsFloor9);
     }
 
