@@ -8,13 +8,11 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.content.Intent;
-import android.graphics.Rect;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.PopupWindow;
@@ -68,12 +66,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     currentRect = room.getRoomRect();
                     hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
 
-//                    Log.d("absoluteX", ""+absoluteX);
-//                    Log.d("relativeX", ""+relativeX);
-//                    Log.d("y", ""+y);
-//                    Log.d("roomX", ""+room.getCenterX());
-//                    Log.d("roomY", ""+room.getCenterY());
-
                     showPopupWindow(room);
                 }
 
@@ -100,10 +92,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         // Set up the layour and initialize the PopupWindow
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.room_popup, (ViewGroup) findViewById(R.id.room_popup));
         PopupWindow pw = new PopupWindow(
-                inflater.inflate(R.layout.room_popup, null, false),
-                300,
-                300,
+                layout,
+                600,
+                600,
                 true
         );
 
@@ -111,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         ((TextView) pw.getContentView().findViewById(R.id.popup_text_view)).setText(room.getPopupInfo());
 
         // Add Button and listener
-        Button button = (Button) pw.getContentView().findViewById(R.id.route_button);
+        Button button = (Button) layout.findViewById(R.id.route_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         });
 
         // Display the window @ Room's center
-        pw.showAtLocation(hView, Gravity.CENTER, x, y);
+        pw.showAtLocation(layout, Gravity.CENTER, x, y);
         pw.update(x - hView.getScrollX(), y, 300, 300);
 
     }
