@@ -4,15 +4,22 @@ import java.util.List;
 
 
 public class Floor {
-	
+
+	private int _id;
 	private String name;
 	private List<DBRoom> rooms;
 	private FloorGraph graph;
 	
 	public Floor(String name, List<DBRoom> rooms, FloorGraph graph) {
+		this(name, rooms, graph, -1);
+	}
+
+	public Floor(String name, List<DBRoom> rooms, FloorGraph graph, int id)
+	{
 		this.name = name;
 		this.rooms = rooms;
 		this.graph = graph;
+		this._id = id;
 	}
 
 	public String getName() {
@@ -26,6 +33,8 @@ public class Floor {
 	public List<DBRoom> getRooms() {
 		return rooms;
 	}
+
+	public int get_id() { return _id; }
 
 	public void setRooms(List<DBRoom> rooms) {
 		this.rooms = rooms;
