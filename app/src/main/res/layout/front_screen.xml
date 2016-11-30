@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimaryDark">
+
+    <TextView
+        android:text="Catlas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:layout_weight="0.26"
+        android:textSize="30sp"
+        android:textAlignment="center"
+        android:paddingTop="160dp"
+        android:fontFamily="monospace"
+        android:textColor="@android:color/background_light" />
+
+    <SearchView
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+        android:layout_weight="3.26" />
+</LinearLayout>
