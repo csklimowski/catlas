@@ -3,7 +3,8 @@ package teamchrisplus.model;
 import java.util.List;
 
 public class Building {
-	
+
+	private int _id;
 	private String name;
 	private List<Floor> floors;
 	private int activeFloor;
@@ -37,5 +38,7 @@ public class Building {
 	public void setActiveFloor(int activeFloor) {
 		this.activeFloor = activeFloor;
 	}
+
+	public int get_id() { return _id; }
 
 }
