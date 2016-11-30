@@ -55,9 +55,9 @@ public class DBManager extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table if not exists "+TABLE+" (id integer primary key, "+BUILDING+" text, "+FLOOR+" integer, "+NAME+" text, "+NUMBER+" integer, "+COORDINATES+" text)");
-        db.execSQL("create table if not exists "+NODE_TABLE+" (id integer primary key, "+NODE_BUILDING+" text, "+NODE_FLOOR+" integer, "+NODE_ID+" integer, "+NODE_COORDINATES+" text)");
-        db.execSQL("create table if not exists "+ADJ_TABLE+" (id integer primary key, "+ADJ_BUILDING+" text, "+ADJ_FLOOR+" integer, "+ADJ_NODE_ONE+" integer, "+ADJ_NODE_TWO+" integer)");
-        db.execSQL("create table if not exists "+BUILDING_TABLE+" (id integer primary key, "+BUILDING_BUILDING+" text, "+BUILDING_FLOOR+" integer, "+BUILDING_ABREVIATION+" text, "+BUILDING_IMAGE+" text)");
+        //db.execSQL("create table if not exists "+NODE_TABLE+" (id integer primary key, "+NODE_BUILDING+" text, "+NODE_FLOOR+" integer, "+NODE_ID+" integer, "+NODE_COORDINATES+" text)");
+        //db.execSQL("create table if not exists "+ADJ_TABLE+" (id integer primary key, "+ADJ_BUILDING+" text, "+ADJ_FLOOR+" integer, "+ADJ_NODE_ONE+" integer, "+ADJ_NODE_TWO+" integer)");
+        //db.execSQL("create table if not exists "+BUILDING_TABLE+" (id integer primary key, "+BUILDING_BUILDING+" text, "+BUILDING_FLOOR+" integer, "+BUILDING_ABREVIATION+" text, "+BUILDING_IMAGE+" text)");
     }
 
 
@@ -70,6 +70,9 @@ public class DBManager extends SQLiteOpenHelper{
     public boolean populate()
     {
         SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("create table if not exists "+NODE_TABLE+" (id integer primary key, "+NODE_BUILDING+" text, "+NODE_FLOOR+" integer, "+NODE_ID+" integer, "+NODE_COORDINATES+" text)");
+        db.execSQL("create table if not exists "+ADJ_TABLE+" (id integer primary key, "+ADJ_BUILDING+" text, "+ADJ_FLOOR+" integer, "+ADJ_NODE_ONE+" integer, "+ADJ_NODE_TWO+" integer)");
+        db.execSQL("create table if not exists "+BUILDING_TABLE+" (id integer primary key, "+BUILDING_BUILDING+" text, "+BUILDING_FLOOR+" integer, "+BUILDING_ABREVIATION+" text, "+BUILDING_IMAGE+" text)");
         System.out.println("There are " + getAllRooms().size() + " rooms in the database");
         if(getAllRooms().size() < 1) {
             insertRoom(new DBRoom("Gould Simpson", 9, "GS 906", 906, "2060 812 2368 1310"));
@@ -77,11 +80,15 @@ public class DBManager extends SQLiteOpenHelper{
             insertRoom(new DBRoom("Gould Simpson", 9, "GS 934", 934, "600 1139 916 1310"));
             insertRoom(new DBRoom("Gould Simpson", 9, "GS 938", 938, "600 971 916 1139"));
             insertRoom(new DBRoom("Gould Simpson", 9, "GS 942", 942, "600 815 916 971"));
-            db.close();
+        }else if(getAllBuildings() == null || getAllBuildings().size() < 1)
+        {
+            insertBuilding("Gould Simpson", 9, "GS", "gs9.xml");
         }else{
             db.close();
             return false;
         }
+        db.close();
+        System.out.println("I populated the database");
         return true;
     }
 
@@ -299,6 +306,8 @@ public class DBManager extends SQLiteOpenHelper{
     }
 
 
+    //Used to get a specific floor of a building
+    //  Returns a Floor object, which also contains a list of DBRoom objects for every room on that floor
     public Floor getFloor(String building, int floor)
     {
         SQLiteDatabase db = this.getReadableDatabase(); //Get a reference to the database
@@ -329,28 +338,33 @@ public class DBManager extends SQLiteOpenHelper{
     }
 
 
-    public ArrayList<String> getFloorsInBuilding(){
+    //Used to get a list of all the floors in a specific building
+    //  The list is just a list of integers (or floor numbers)
+    //  Call the getFloor method to get a Floor object with a list of all the rooms
+    public ArrayList<Integer> getFloorsInBuilding(String building){
         SQLiteDatabase db = this.getReadableDatabase(); //Get a reference to the database
-        ArrayList<String> buildings = new ArrayList<String>();
+        ArrayList<Integer> floors = new ArrayList<Integer>();
         try {
             Cursor cur = db.rawQuery("select * from " + BUILDING_TABLE, null);
             cur.moveToFirst();
             while (!cur.isAfterLast())
             {
-                if(!buildings.contains(cur.getString(cur.getColumnIndex(BUILDING_BUILDING))))
-                    buildings.add(cur.getString(cur.getColumnIndex(BUILDING_BUILDING)));
+                if(!floors.contains(cur.getInt(cur.getColumnIndex(BUILDING_FLOOR)))
+                        && cur.getString(cur.getColumnIndex(BUILDING_BUILDING)).equals(building))
+                    floors.add(cur.getInt(cur.getColumnIndex(BUILDING_FLOOR)));
                 cur.moveToNext();
             }
             db.close();
-            return buildings;
+            return floors;
         }catch(Exception e){
             db.close();
-            System.out.println("ERROR selecting buildings from buildings table in database");
+            System.out.println("ERROR selecting floors from buildings table in database");
             return null;
         }
     }
 
 
+    //Used to get a list of names of all the buildings
     public ArrayList<String> getAllBuildings(){
         SQLiteDatabase db = this.getReadableDatabase(); //Get a reference to the database
         ArrayList<String> buildings = new ArrayList<String>();
