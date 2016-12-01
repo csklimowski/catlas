@@ -71,6 +71,7 @@ public class DBManager extends SQLiteOpenHelper{
     //Pupulates the database with some information if the database is empty
     public boolean populate()
     {
+        deleteBuilding("Gould Simpson");
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("create table if not exists "+NODE_TABLE+" (id integer primary key, "+NODE_BUILDING+" text, "+NODE_FLOOR+" integer, "+NODE_ID+" integer, "+NODE_COORDINATES+" text)");
         db.execSQL("create table if not exists "+ADJ_TABLE+" (id integer primary key, "+ADJ_BUILDING+" text, "+ADJ_FLOOR+" integer, "+ADJ_NODE_ONE+" integer, "+ADJ_NODE_TWO+" integer)");
