@@ -180,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         boolean inRoom = false;
         FloorNode selectedNode;
         Stack<FloorNode> path;
+
         if(event.getAction() == MotionEvent.ACTION_UP) {
             for (DBRoom room : floor.getRooms()) {
                 if (room.hasCoordinates((int) x, (int) y)) {
@@ -194,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         if(event.getAction() == MotionEvent.ACTION_UP) {
             selectRoom(x, y);
-            selectNode(x, y);
         }
         return false;
     }
@@ -210,19 +210,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
                 showPopupWindow(room);
             }
-        }
-
-        if(!inRoom) {
-            hView.setRect(0, 0, 0, 0);
-            hView.setDestinationNode(null);
-        }
-    }
-
-    public void selectNode(int x, int y) {
-        FloorNode selectedNode = floor.findNode( x, y);
-        if(selectedNode != null) {
-            Log.d("yo", "we found it");
-            setDestinationNode(selectedNode);
         }
     }
 
@@ -264,7 +251,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         routeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectNode(roomX, roomY);
                 setDestinationNode(destinationNode);
             }
         });
@@ -309,42 +295,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     /*
-    * Creates a PopupWindow at a specified Room, which shows that Room's information
-    * and provides a Button for routing to that room. Also clears an existing window.
-    *
-    * Author: Miranda Motsinger
-    */
-    private void showPopupWindow(Room room) {
-        int x = room.getCenterX();
-        int y = room.getCenterY();
-
-        // Set up the layour and initialize the PopupWindow
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        PopupWindow pw = new PopupWindow(
-                inflater.inflate(R.layout.room_popup, null, false),
-                300,
-                300,
-                true
-        );
-
-        // Set PopupWindow's text to Room's info
-        ((TextView) pw.getContentView().findViewById(R.id.popup_text_view)).setText(room.getPopupInfo());
-
-        // Add Button and listener
-        Button button = (Button) pw.getContentView().findViewById(R.id.route_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("yeahboi", "clicked the button");
-            }
-        });
-
-        // Display the window @ Room's center
-        pw.showAtLocation(hView, Gravity.CENTER, x, y);
-        pw.update(x - hView.getScrollX(), y, 300, 300);
-    }
-
-    /*
     * If the requested room exists, finds it on the floor and selects it.
     *
     */
@@ -356,7 +306,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 Rect currentRect = room.getRoomRect();
                 hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
                 hView.scrollTo(currentRect.left - 100, 0);
-                selectNode(room.getCenterX(), room.getCenterY());
                 showPopupWindow(room);
                 break;
             }
@@ -385,7 +334,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 Rect currentRect = selectedRoom.getRoomRect();
                 hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
                 hView.scrollTo(currentRect.left - 100, 0);
-                selectNode(selectedRoom.getCenterX(), selectedRoom.getCenterY());
                 showPopupWindow(selectedRoom);
             }
         }
