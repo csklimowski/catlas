@@ -74,6 +74,7 @@ public class DBManager extends SQLiteOpenHelper{
     {
         boolean populated = false;
         SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(NODE_TABLE, null, null);
         db.execSQL("create table if not exists "+NODE_TABLE+" (id integer primary key, "+NODE_BUILDING+" text, "+NODE_FLOOR+" integer, "+NODE_ID+" integer, "+NODE_COORDINATES+" text)");
         db.execSQL("create table if not exists "+ADJ_TABLE+" (id integer primary key, "+ADJ_BUILDING+" text, "+ADJ_FLOOR+" integer, "+ADJ_NODE_ONE+" integer, "+ADJ_NODE_TWO+" integer)");
         db.execSQL("create table if not exists "+BUILDING_TABLE+" (id integer primary key, "+BUILDING_BUILDING+" text, "+BUILDING_FLOOR+" integer, "+BUILDING_ABREVIATION+" text, "+BUILDING_IMAGE+" text)");
@@ -93,26 +94,26 @@ public class DBManager extends SQLiteOpenHelper{
             populated = true;
         }
         if(getNodesOnFloor("Gould Simpson", 9).size() < 1) {
-            insertFloorNode("Gould Simpson", 9, 1, "2200 1050");
-            insertFloorNode("Gould Simpson", 9, 2, "1730 1220");
-            insertFloorNode("Gould Simpson", 9, 3, "750 1220");
-            insertFloorNode("Gould Simpson", 9, 4, "750 1050");
-            insertFloorNode("Gould Simpson", 9, 5, "750 880");
-            insertFloorNode("Gould Simpson", 9, 6, "2800 380");
-            insertFloorNode("Gould Simpson", 9, 7, "2400 380");
-            insertFloorNode("Gould Simpson", 9, 8, "2400 560");
-            insertFloorNode("Gould Simpson", 9, 9, "2400 1380");
-            insertFloorNode("Gould Simpson", 9, 10, "2200 1380");
-            insertFloorNode("Gould Simpson", 9, 11, "1730 1380");
-            insertFloorNode("Gould Simpson", 9, 12, "750 1380");
-            insertFloorNode("Gould Simpson", 9, 13, "540 1380");
-            insertFloorNode("Gould Simpson", 9, 14, "540 1050");
-            insertFloorNode("Gould Simpson", 9, 15, "540 880");
-            insertFloorNode("Gould Simpson", 9, 16, "540 570");
-            insertFloorNode("Gould Simpson", 9, 17, "870 570");
-            insertFloorNode("Gould Simpson", 9, 18, "870 440");
-            insertFloorNode("Gould Simpson", 9, 19, "2100 440");
-            insertFloorNode("Gould Simpson", 9, 20, "2100 560");
+            insertFloorNode("Gould Simpson", 9, 1, "1914 918");
+            insertFloorNode("Gould Simpson", 9, 2, "1522 1052");
+            insertFloorNode("Gould Simpson", 9, 3, "705 1050");
+            insertFloorNode("Gould Simpson", 9, 4, "705 911");
+            insertFloorNode("Gould Simpson", 9, 5, "705 777");
+            insertFloorNode("Gould Simpson", 9, 6, "2400 360");
+            insertFloorNode("Gould Simpson", 9, 7, "2100 360");
+            insertFloorNode("Gould Simpson", 9, 8, "2100 520");
+            insertFloorNode("Gould Simpson", 9, 9, "2100 1150");
+            insertFloorNode("Gould Simpson", 9, 10, "1914 1150");
+            insertFloorNode("Gould Simpson", 9, 11, "1522 1150");
+            insertFloorNode("Gould Simpson", 9, 12, "705 1150");
+            insertFloorNode("Gould Simpson", 9, 13, "550 1150");
+            insertFloorNode("Gould Simpson", 9, 14, "550 925");
+            insertFloorNode("Gould Simpson", 9, 15, "550 785");
+            insertFloorNode("Gould Simpson", 9, 16, "550 525");
+            insertFloorNode("Gould Simpson", 9, 17, "790 525");
+            insertFloorNode("Gould Simpson", 9, 18, "790 420");
+            insertFloorNode("Gould Simpson", 9, 19, "1800 420");
+            insertFloorNode("Gould Simpson", 9, 20, "1800 520");
 
             insertAdjacency("Gould Simpson", 9, 6, 7);
             insertAdjacency("Gould Simpson", 9, 7, 8);
