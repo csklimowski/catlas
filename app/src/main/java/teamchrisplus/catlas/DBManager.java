@@ -465,4 +465,29 @@ public class DBManager extends SQLiteOpenHelper{
     }
 
 
+    //Used to get the image name for a given floor of a given building
+    public String getFloorImage(String building, int floor)
+    {
+        SQLiteDatabase db = this.getReadableDatabase(); //Get a reference to the database
+        String image = "";
+        try {
+            Cursor cur = db.rawQuery("select * from " + BUILDING_TABLE + " WHERE building=? and floor=?", new String[]{building, String.valueOf(floor)});
+            cur.moveToFirst();
+            while (!cur.isAfterLast())
+            {
+                if(cur.getString(cur.getColumnIndex(BUILDING_BUILDING)).equals(building) && cur.getInt(cur.getColumnIndex(BUILDING_FLOOR)) == floor) {
+                    image = cur.getString(cur.getColumnIndex(BUILDING_IMAGE));
+                    break;
+                }
+                cur.moveToNext();
+            }
+            db.close();
+            return image;
+        }catch(Exception e){
+            db.close();
+            System.out.println("ERROR selecting floor image from buildings table in database");
+            return null;
+        }
+    }
+
 }
