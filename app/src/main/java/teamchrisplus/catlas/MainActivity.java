@@ -3,7 +3,9 @@ package teamchrisplus.catlas;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.PopupWindow;
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private FloorNode destinationNode;
     private FloorNode sourceNode;
     private ArrayList<Floor> floorList = new ArrayList<Floor>();
+    private DBManager db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         LoadFloors load = new LoadFloors();
         //floor = load.getFloor("GS Floor 9");
 
-        DBManager db = new DBManager(this);
+        db = new DBManager(this);
         db.populate();
         ArrayList<DBRoom> rooms = db.getAllRooms();
         db.close();
@@ -130,7 +134,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         sourceNode = node6;
 
 
-        floor = new Floor("Gould Simpson : Floor 9 : ", rooms, graph);
+        //floor = new Floor("Gould Simpson : Floor 9 : ", rooms, graph);
+        floor = db.getFloor("Gould Simpson", 9);
 
         TextView myTextView = (TextView) findViewById(R.id.my_textView);
         myTextView.setText(floor.getName());
@@ -138,8 +143,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         handleIntent(getIntent());
     }
 
+    // change the current floor
     public void setFloor(int floorNum) {
-        // empty for now
+        floor = db.getFloor("Gould Simpson", floorNum);
+        String floorName = db.getFloorImage("Gould Simpson", floorNum);
+        Resources res = getResources();
+        int resID = res.getIdentifier(floorName.substring(0, floorName.length() - 4), "drawable", getPackageName());
+        Drawable drawable = res.getDrawable(resID);
+        ImageView img = (ImageView) findViewById(R.id.imageView_map);
+        img.setImageDrawable(drawable);
     }
 
     @Override
