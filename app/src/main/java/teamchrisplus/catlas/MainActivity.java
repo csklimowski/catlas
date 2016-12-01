@@ -1,5 +1,6 @@
 package teamchrisplus.catlas;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
@@ -249,8 +250,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         getMenuInflater().inflate(R.menu.room_list_menu, menu);
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        ComponentName componentName = new ComponentName(MainActivity.this, SearchActivity.class);
+        System.out.println(componentName);
         SearchView searchView = (SearchView) menu.findItem(R.id.search_rooms).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName));
         searchView.setIconifiedByDefault(false);
 
         return super.onCreateOptionsMenu(menu);
