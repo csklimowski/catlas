@@ -23,6 +23,8 @@ public class FloorNode {
         this(x, y, nodeRect, -1, -1);
     }
 
+    public FloorNode(float x, float y, int nodeID, int id){ this(x, y, new Rect((int)x-5, (int)y-5, (int)x+5, (int)y+5), nodeID, id); }
+
     public FloorNode(float x, float y, Rect nodeRect, int nodeID, int id){
         this.nodeRect = nodeRect;
         this.x = x;
