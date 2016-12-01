@@ -21,14 +21,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.PopupWindow;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -36,7 +34,6 @@ import teamchrisplus.model.DBRoom;
 import teamchrisplus.model.Floor;
 import teamchrisplus.model.FloorGraph;
 import teamchrisplus.model.FloorNode;
-import teamchrisplus.model.DBRoom;
 import teamchrisplus.model.Room;
 import teamchrisplus.view.HighlightView;
 
@@ -49,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private FloorNode sourceNode;
     private ArrayList<Floor> floorList = new ArrayList<Floor>();
     private DBManager db;
+    private int downX = 0;
+    private int downY = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,28 +172,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int x = (int) event.getX() + hView.getScrollX();
-        int absoluteX = (int) event.getX() + hView.getScrollX();
-        int relativeX = (int) event.getX();
         int y = (int) event.getY();
-        Rect currentRect;
-        boolean inRoom = false;
-        FloorNode selectedNode;
-        Stack<FloorNode> path;
-
-        if(event.getAction() == MotionEvent.ACTION_UP) {
-            for (DBRoom room : floor.getRooms()) {
-                if (room.hasCoordinates((int) x, (int) y)) {
-                    inRoom = true;
-                    currentRect = room.getRoomRect();
-                    hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
-                    selectRoom(x, y);
-                    showPopupWindow(room);
-                }
-            }
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            downX = x;
+            downY = y;
         }
 
-        if(event.getAction() == MotionEvent.ACTION_UP) {
+        if(event.getAction() == MotionEvent.ACTION_UP && Math.abs(x - downX) < 10 && Math.abs(y - downY) < 10) {
             selectRoom(x, y);
+            selectNode(x, y);
         }
         return false;
     }
@@ -210,6 +196,19 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
                 showPopupWindow(room);
             }
+        }
+
+        if(!inRoom) {
+            hView.setRect(0, 0, 0, 0);
+            hView.setDestinationNode(null);
+        }
+    }
+
+    public void selectNode(int x, int y) {
+        FloorNode selectedNode = floor.findNode( x, y);
+        if(selectedNode != null) {
+            Log.d("yo", "we found it");
+            setDestinationNode(selectedNode);
         }
     }
 
@@ -251,7 +250,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         routeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setDestinationNode(floor.findNode(roomX, roomY));
+                selectNode(roomX, roomY);
+                setDestinationNode(destinationNode);
             }
         });
         Button startButton = (Button) pw.getContentView().findViewById(R.id.start_button);
@@ -295,6 +295,42 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     /*
+    * Creates a PopupWindow at a specified Room, which shows that Room's information
+    * and provides a Button for routing to that room. Also clears an existing window.
+    *
+    * Author: Miranda Motsinger
+    */
+    private void showPopupWindow(Room room) {
+        int x = room.getCenterX();
+        int y = room.getCenterY();
+
+        // Set up the layour and initialize the PopupWindow
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        PopupWindow pw = new PopupWindow(
+                inflater.inflate(R.layout.room_popup, null, false),
+                300,
+                300,
+                true
+        );
+
+        // Set PopupWindow's text to Room's info
+        ((TextView) pw.getContentView().findViewById(R.id.popup_text_view)).setText(room.getPopupInfo());
+
+        // Add Button and listener
+        Button button = (Button) pw.getContentView().findViewById(R.id.route_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("yeahboi", "clicked the button");
+            }
+        });
+
+        // Display the window @ Room's center
+        pw.showAtLocation(hView, Gravity.CENTER, x, y);
+        pw.update(x - hView.getScrollX(), y, 300, 300);
+    }
+
+    /*
     * If the requested room exists, finds it on the floor and selects it.
     *
     */
@@ -306,6 +342,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 Rect currentRect = room.getRoomRect();
                 hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
                 hView.scrollTo(currentRect.left - 100, 0);
+                selectNode(room.getCenterX(), room.getCenterY());
                 showPopupWindow(room);
                 break;
             }
@@ -334,6 +371,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 Rect currentRect = selectedRoom.getRoomRect();
                 hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
                 hView.scrollTo(currentRect.left - 100, 0);
+                selectNode(selectedRoom.getCenterX(), selectedRoom.getCenterY());
                 showPopupWindow(selectedRoom);
             }
         }
