@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.Cursor;
+import android.graphics.Point;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -71,29 +72,74 @@ public class DBManager extends SQLiteOpenHelper{
     //Pupulates the database with some information if the database is empty
     public boolean populate()
     {
-        deleteBuilding("Gould Simpson");
+        boolean populated = false;
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("create table if not exists "+NODE_TABLE+" (id integer primary key, "+NODE_BUILDING+" text, "+NODE_FLOOR+" integer, "+NODE_ID+" integer, "+NODE_COORDINATES+" text)");
         db.execSQL("create table if not exists "+ADJ_TABLE+" (id integer primary key, "+ADJ_BUILDING+" text, "+ADJ_FLOOR+" integer, "+ADJ_NODE_ONE+" integer, "+ADJ_NODE_TWO+" integer)");
         db.execSQL("create table if not exists "+BUILDING_TABLE+" (id integer primary key, "+BUILDING_BUILDING+" text, "+BUILDING_FLOOR+" integer, "+BUILDING_ABREVIATION+" text, "+BUILDING_IMAGE+" text)");
         System.out.println("There are " + getAllRooms().size() + " rooms in the database");
         if(getAllRooms().size() < 1) {
-            insertRoom(new DBRoom("Gould Simpson", 9, "GS 906", 906, "2060 812 2368 1310"));
-            insertRoom(new DBRoom("Gould Simpson", 9, "GS 918", 918, "1555 1139 1934 1310"));
-            insertRoom(new DBRoom("Gould Simpson", 9, "GS 934", 934, "600 1139 916 1310"));
-            insertRoom(new DBRoom("Gould Simpson", 9, "GS 938", 938, "600 971 916 1139"));
-            insertRoom(new DBRoom("Gould Simpson", 9, "GS 942", 942, "600 815 916 971"));
-        }else if(getAllBuildings() == null || getAllBuildings().size() < 1)
+            insertRoom(new DBRoom("Gould Simpson", 9, "GS 906", 906, "1788 710 2040 1125"));
+            insertRoom(new DBRoom("Gould Simpson", 9, "GS 918", 918, "1361 978 1682 1125"));
+            insertRoom(new DBRoom("Gould Simpson", 9, "GS 934", 934, "570 978 840 1122"));
+            insertRoom(new DBRoom("Gould Simpson", 9, "GS 938", 938, "570 844 840 978"));
+            insertRoom(new DBRoom("Gould Simpson", 9, "GS 942", 942, "570 710 840 844"));
+            populated = true;
+        }
+        if(getAllBuildings() == null || getAllBuildings().size() < 1)
         {
             insertBuilding("Gould Simpson", 9, "GS", "gs9.xml");
             insertBuilding("Gould Simpson", 2, "GS", "gs2.xml");
-        }else{
-            db.close();
-            return false;
+            populated = true;
+        }
+        if(getNodesOnFloor("Gould Simpson", 9).size() < 1) {
+            insertFloorNode("Gould Simpson", 9, 1, "2200 1050");
+            insertFloorNode("Gould Simpson", 9, 2, "1730 1220");
+            insertFloorNode("Gould Simpson", 9, 3, "750 1220");
+            insertFloorNode("Gould Simpson", 9, 4, "750 1050");
+            insertFloorNode("Gould Simpson", 9, 5, "750 880");
+            insertFloorNode("Gould Simpson", 9, 6, "2800 380");
+            insertFloorNode("Gould Simpson", 9, 7, "2400 380");
+            insertFloorNode("Gould Simpson", 9, 8, "2400 560");
+            insertFloorNode("Gould Simpson", 9, 9, "2400 1380");
+            insertFloorNode("Gould Simpson", 9, 10, "2200 1380");
+            insertFloorNode("Gould Simpson", 9, 11, "1730 1380");
+            insertFloorNode("Gould Simpson", 9, 12, "750 1380");
+            insertFloorNode("Gould Simpson", 9, 13, "540 1380");
+            insertFloorNode("Gould Simpson", 9, 14, "540 1050");
+            insertFloorNode("Gould Simpson", 9, 15, "540 880");
+            insertFloorNode("Gould Simpson", 9, 16, "540 570");
+            insertFloorNode("Gould Simpson", 9, 17, "870 570");
+            insertFloorNode("Gould Simpson", 9, 18, "870 440");
+            insertFloorNode("Gould Simpson", 9, 19, "2100 440");
+            insertFloorNode("Gould Simpson", 9, 20, "2100 560");
+
+            insertAdjacency("Gould Simpson", 9, 6, 7);
+            insertAdjacency("Gould Simpson", 9, 7, 8);
+            insertAdjacency("Gould Simpson", 9, 8, 20);
+            insertAdjacency("Gould Simpson", 9, 8, 9);
+            insertAdjacency("Gould Simpson", 9, 9, 10);
+            insertAdjacency("Gould Simpson", 9, 10, 11);
+            insertAdjacency("Gould Simpson", 9, 11, 12);
+            insertAdjacency("Gould Simpson", 9, 12, 13);
+            insertAdjacency("Gould Simpson", 9, 13, 14);
+            insertAdjacency("Gould Simpson", 9, 14, 15);
+            insertAdjacency("Gould Simpson", 9, 15, 16);
+            insertAdjacency("Gould Simpson", 9, 16, 17);
+            insertAdjacency("Gould Simpson", 9, 17, 18);
+            insertAdjacency("Gould Simpson", 9, 18, 19);
+            insertAdjacency("Gould Simpson", 9, 19, 20);
+            insertAdjacency("Gould Simpson", 9, 10, 1);
+            insertAdjacency("Gould Simpson", 9, 11, 2);
+            insertAdjacency("Gould Simpson", 9, 12, 3);
+            insertAdjacency("Gould Simpson", 9, 14, 4);
+            insertAdjacency("Gould Simpson", 9, 15, 5);
+            populated = true;
         }
         db.close();
-        System.out.println("I populated the database");
-        return true;
+        if(populated)
+            System.out.println("I populated the database");
+        return populated;
     }
 
 
@@ -333,10 +379,24 @@ public class DBManager extends SQLiteOpenHelper{
                 cur.moveToNext();
             }
             db.close();
-            return new Floor("Floor " + floor, rooms, new FloorGraph());
+            ArrayList<FloorNode> nodes = getNodesOnFloor(building, floor);
+            FloorGraph graph = new FloorGraph(nodes);
+
+            ArrayList<Point> adjacencies = new ArrayList<Point>();
+            for(FloorNode n : nodes){
+                for(int i : getAdjacenciesTo(building, floor, n.getNodeID())){
+                    if(!adjacencies.contains(new Point(n.getNodeID(), i)) && !adjacencies.contains(new Point(i, n.getNodeID()))) {
+                        adjacencies.add(new Point(n.getNodeID(), i));
+                        graph.addEdge(n, nodes.get(i-1));
+                        System.out.println("Added edge for: " + n.getNodeID() + " and " + i);
+                    }
+                }
+            }
+
+            return new Floor("Floor " + floor, rooms, graph);
         }catch(Exception e){
             db.close();
-            System.out.println("ERROR selecting rooms from rooms table in database");
+            System.out.println("ERROR selecting floor from rooms table in database");
             return null;
         }
     }
