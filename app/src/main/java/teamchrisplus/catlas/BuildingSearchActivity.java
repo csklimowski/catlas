@@ -4,13 +4,17 @@ import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class BuildingSearchActivity extends ListActivity {
+
+    private ArrayList<String> results;
+    private ListView listView_allBuildings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,19 +32,39 @@ public class BuildingSearchActivity extends ListActivity {
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            searchBuildings(query);
+            populateBuildingListView(query);
+            assignOnItemClickListener();
         }
     }
 
-    private void searchBuildings(String query) {
+    private void populateBuildingListView(String query) {
         query = query.toLowerCase();
         DBManager db = new DBManager(this);
+        results = new ArrayList<String>();
 
         for(String buildingName : db.getAllBuildings()) {
-            System.out.println(buildingName);
             if (buildingName.toLowerCase().contains(query)) {
-                startActivity(new Intent(BuildingSearchActivity.this, MainActivity.class));
+                results.add(buildingName);
             }
         }
+
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, results);
+        setListAdapter(adapter);
+    }
+
+    private void assignOnItemClickListener() {
+        listView_allBuildings = this.getListView();
+
+        listView_allBuildings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(BuildingSearchActivity.this, FloorListActivity.class);
+                Bundle b = new Bundle();
+                b.putString("buildingName", (String) parent.getItemAtPosition(position));
+                intent.putExtras(b);
+
+                startActivity(intent);
+            }
+        });
     }
 }
