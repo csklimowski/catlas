@@ -10,7 +10,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.Cursor;
+
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class DBManager extends SQLiteOpenHelper{
 
@@ -66,7 +68,7 @@ public class DBManager extends SQLiteOpenHelper{
 
     }
 
-
+    //Pupulates the database with some information if the database is empty
     public boolean populate()
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -108,7 +110,7 @@ public class DBManager extends SQLiteOpenHelper{
             return true;
         }catch(Exception e){
             db.close();
-            System.out.println("There was an error inserting into the room table");
+            System.out.println("ERROR inserting into the room table");
             return false;
         }
     }
@@ -128,7 +130,7 @@ public class DBManager extends SQLiteOpenHelper{
             return true;
         }catch(Exception e){
             db.close();
-            System.out.println("There was an error inserting into the node table");
+            System.out.println("ERROR inserting into the node table");
             return false;
         }
     }
@@ -148,7 +150,7 @@ public class DBManager extends SQLiteOpenHelper{
             return true;
         }catch(Exception e){
             db.close();
-            System.out.println("There was an error inserting into the adjacency table");
+            System.out.println("ERROR inserting into the adjacency table");
             return false;
         }
     }
@@ -168,7 +170,7 @@ public class DBManager extends SQLiteOpenHelper{
             return true;
         }catch(Exception e){
             db.close();
-            System.out.println("There was an error inserting into the building table");
+            System.out.println("ERROR inserting into the building table");
             return false;
         }
     }
@@ -189,7 +191,7 @@ public class DBManager extends SQLiteOpenHelper{
             return true;
         }catch(Exception e){
             db.close();
-            System.out.println("There was an error updating the room table");
+            System.out.println("ERROR updating the room table");
             return false;
         }
     }
@@ -209,7 +211,7 @@ public class DBManager extends SQLiteOpenHelper{
             return true;
         }catch(Exception e){
             db.close();
-            System.out.println("There was an error updating the node table");
+            System.out.println("ERROR updating the node table");
             return false;
         }
     }
@@ -224,7 +226,7 @@ public class DBManager extends SQLiteOpenHelper{
             return true;
         }catch(Exception e){
             db.close();
-            System.out.println("There was an error deleting from the room table");
+            System.out.println("ERROR deleting from the room table");
             return false;
         }
     }
@@ -239,7 +241,7 @@ public class DBManager extends SQLiteOpenHelper{
             return true;
         }catch(Exception e){
             db.close();
-            System.out.println("There was an error deleting from the node table");
+            System.out.println("ERROR deleting from the node table");
             return false;
         }
     }
@@ -255,7 +257,7 @@ public class DBManager extends SQLiteOpenHelper{
             return true;
         }catch(Exception e){
             db.close();
-            System.out.println("There was an error deleting from the adjacency table");
+            System.out.println("ERROR deleting from the adjacency table");
             return false;
         }
     }
@@ -270,7 +272,7 @@ public class DBManager extends SQLiteOpenHelper{
             return true;
         }catch(Exception e){
             db.close();
-            System.out.println("There was an error deleting a building from the building tale");
+            System.out.println("ERROR deleting a building from the building tale");
             return false;
         }
     }
@@ -338,6 +340,82 @@ public class DBManager extends SQLiteOpenHelper{
     }
 
 
+    //Used to get a list of all the nodes on a given floor of a given building
+    public ArrayList<FloorNode> getNodesOnFloor(String building, int floor)
+    {
+        SQLiteDatabase db = this.getReadableDatabase(); //Get a reference to the database
+        ArrayList<FloorNode> nodes = new ArrayList<FloorNode>();
+        try {
+            Cursor cur = db.rawQuery("select * from " + NODE_TABLE + " WHERE building=? and floor=?", new String[]{building, String.valueOf(floor)});
+            cur.moveToFirst();
+            while (!cur.isAfterLast()) {
+                if(cur.getString(cur.getColumnIndex(NODE_BUILDING)).equals(building) && cur.getInt(cur.getColumnIndex(NODE_FLOOR)) == floor) {
+                    String coords = cur.getString(cur.getColumnIndex(NODE_COORDINATES));
+
+                    //Get the x and y coordinates from the coordinate string from the database
+                    Scanner scan = new Scanner(coords);
+                    int x = scan.nextInt();
+                    int y = scan.nextInt();
+                    scan.close();
+
+                    //Create a floor node and add it to the list
+                    FloorNode node = new FloorNode((float)x, (float)y, cur.getInt(cur.getColumnIndex(NODE_ID)), cur.getInt(cur.getColumnIndex("id")));
+                    nodes.add(node);
+                }
+                cur.moveToNext();
+            }
+            db.close();
+            return nodes;
+        }catch(Exception e){
+            db.close();
+            System.out.println("ERROR selecting nodes from nodes table in database");
+            return null;
+        }
+    }
+
+
+    //Used to get a list of all the nodes on a given floor of a given building
+    public ArrayList<Integer> getAdjacenciesTo(String building, int floor, int nodeID)
+    {
+        SQLiteDatabase db = this.getReadableDatabase(); //Get a reference to the database
+        ArrayList<Integer> nodes = new ArrayList<Integer>();
+        try {
+            Cursor cur = db.rawQuery("select * from " + ADJ_TABLE + " WHERE building=? and floor=? and node1=?", new String[]{building, String.valueOf(floor), String.valueOf(nodeID)});
+            cur.moveToFirst();
+            while (!cur.isAfterLast()) {
+                if(cur.getString(cur.getColumnIndex(ADJ_BUILDING)).equals(building) && cur.getInt(cur.getColumnIndex(ADJ_FLOOR)) == floor
+                        && cur.getInt(cur.getColumnIndex(ADJ_NODE_ONE)) == nodeID) {
+                    //Get the adjacent node's nodeID from the table
+                    int node = cur.getInt(cur.getColumnIndex(ADJ_NODE_TWO));
+                    if(!nodes.contains(node))
+                        nodes.add(node);
+                }
+                cur.moveToNext();
+            }
+
+            db.rawQuery("select * from " + ADJ_TABLE + " WHERE building=? and floor=? and node2=?", new String[]{building, String.valueOf(floor), String.valueOf(nodeID)});
+            cur.moveToFirst();
+            while (!cur.isAfterLast()) {
+                if(cur.getString(cur.getColumnIndex(ADJ_BUILDING)).equals(building) && cur.getInt(cur.getColumnIndex(ADJ_FLOOR)) == floor
+                        && cur.getInt(cur.getColumnIndex(ADJ_NODE_ONE)) == nodeID) {
+                    //Get the adjacent node's nodeID from the table
+                    int node = cur.getInt(cur.getColumnIndex(ADJ_NODE_TWO));
+                    if(!nodes.contains(node))
+                        nodes.add(node);
+                }
+                cur.moveToNext();
+            }
+
+            db.close();
+            return nodes;
+        }catch(Exception e){
+            db.close();
+            System.out.println("ERROR selecting nodes from nodes table in database");
+            return null;
+        }
+    }
+
+
     //Used to get a list of all the floors in a specific building
     //  The list is just a list of integers (or floor numbers)
     //  Call the getFloor method to get a Floor object with a list of all the rooms
@@ -386,5 +464,30 @@ public class DBManager extends SQLiteOpenHelper{
         }
     }
 
+
+    //Used to get the image name for a given floor of a given building
+    public String getFloorImage(String building, int floor)
+    {
+        SQLiteDatabase db = this.getReadableDatabase(); //Get a reference to the database
+        String image = "";
+        try {
+            Cursor cur = db.rawQuery("select * from " + BUILDING_TABLE + " WHERE building=? and floor=?", new String[]{building, String.valueOf(floor)});
+            cur.moveToFirst();
+            while (!cur.isAfterLast())
+            {
+                if(cur.getString(cur.getColumnIndex(BUILDING_BUILDING)).equals(building) && cur.getInt(cur.getColumnIndex(BUILDING_FLOOR)) == floor) {
+                    image = cur.getString(cur.getColumnIndex(BUILDING_IMAGE));
+                    break;
+                }
+                cur.moveToNext();
+            }
+            db.close();
+            return image;
+        }catch(Exception e){
+            db.close();
+            System.out.println("ERROR selecting floor image from buildings table in database");
+            return null;
+        }
+    }
 
 }

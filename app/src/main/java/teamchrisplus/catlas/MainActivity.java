@@ -1,11 +1,17 @@
 package teamchrisplus.catlas;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
@@ -15,10 +21,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.PopupWindow;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -38,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private FloorNode destinationNode;
     private FloorNode sourceNode;
     private ArrayList<Floor> floorList = new ArrayList<Floor>();
+    private DBManager db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         LoadFloors load = new LoadFloors();
         //floor = load.getFloor("GS Floor 9");
 
-        DBManager db = new DBManager(this);
+        db = new DBManager(this);
         db.populate();
         ArrayList<DBRoom> rooms = db.getAllRooms();
         db.close();
@@ -124,12 +134,24 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         sourceNode = node6;
 
 
-        floor = new Floor("Gould Simpson : Floor 9 : ", rooms, graph);
+        //floor = new Floor("Gould Simpson : Floor 9 : ", rooms, graph);
+        floor = db.getFloor("Gould Simpson", 9);
 
         TextView myTextView = (TextView) findViewById(R.id.my_textView);
         myTextView.setText(floor.getName());
 
         handleIntent(getIntent());
+    }
+
+    // change the current floor
+    public void setFloor(int floorNum) {
+        floor = db.getFloor("Gould Simpson", floorNum);
+        String floorName = db.getFloorImage("Gould Simpson", floorNum);
+        Resources res = getResources();
+        int resID = res.getIdentifier(floorName.substring(0, floorName.length() - 4), "drawable", getPackageName());
+        Drawable drawable = res.getDrawable(resID);
+        ImageView img = (ImageView) findViewById(R.id.imageView_map);
+        img.setImageDrawable(drawable);
     }
 
     @Override
@@ -249,8 +271,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         getMenuInflater().inflate(R.menu.room_list_menu, menu);
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        ComponentName componentName = new ComponentName(MainActivity.this, SearchActivity.class);
+        System.out.println(componentName);
         SearchView searchView = (SearchView) menu.findItem(R.id.search_rooms).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName));
         searchView.setIconifiedByDefault(false);
 
         return super.onCreateOptionsMenu(menu);
@@ -333,6 +357,21 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             searchRooms(query);
+        } else if (intent.hasExtra("floor")) {
+            setFloor(intent.getIntExtra("floor", 2));
+            int selectedNumber = intent.getIntExtra("number", 0);
+            DBRoom selectedRoom = null;
+            for (DBRoom room : floor.getRooms()) {
+                if (room.get_number() == selectedNumber)
+                    selectedRoom = room;
+            }
+            if (selectedRoom != null) {
+                Rect currentRect = selectedRoom.getRoomRect();
+                hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
+                hView.scrollTo(currentRect.left - 100, 0);
+                selectNode(selectedRoom.getCenterX(), selectedRoom.getCenterY());
+                showPopupWindow(selectedRoom);
+            }
         }
     }
 }
