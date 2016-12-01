@@ -85,6 +85,7 @@ public class DBManager extends SQLiteOpenHelper{
         }else if(getAllBuildings() == null || getAllBuildings().size() < 1)
         {
             insertBuilding("Gould Simpson", 9, "GS", "gs9.xml");
+            insertBuilding("Gould Simpson", 2, "GS", "gs2.xml");
         }else{
             db.close();
             return false;
