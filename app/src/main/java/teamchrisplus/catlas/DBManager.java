@@ -68,7 +68,7 @@ public class DBManager extends SQLiteOpenHelper{
 
     }
 
-
+    //Pupulates the database with some information if the database is empty
     public boolean populate()
     {
         SQLiteDatabase db = this.getWritableDatabase();
