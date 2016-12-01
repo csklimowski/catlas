@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         floor = db.getFloor(b2.getString("buildingName"), b2.getInt("floorNumber"));
         host.setCurrentTabByTag(b2.getInt("floorNumber") +"");
 
+        sourceNode = floor.getFirstNode();
+
         TextView myTextView = (TextView) findViewById(R.id.my_textView);
         myTextView.setText(floor.getName());
 
@@ -308,5 +310,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             db.close();
         }
         setFloor(Integer.parseInt(tab));
+        setDestinationNode(null);
+        hView.invalidate();
     }
 }

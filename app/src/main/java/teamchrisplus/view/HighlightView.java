@@ -39,6 +39,7 @@ public class HighlightView extends HorizontalScrollView {
 
     public void setDestinationNode(FloorNode destinationNode) {
         this.destinationNode = destinationNode;
+        this.invalidate();
     }
 
     public void setRect(float x1, float y1, float x2, float y2) {

@@ -46,6 +46,10 @@ public class Floor {
 		graph.initPaths(source, destination);
 	}
 
+	public FloorNode getFirstNode() {
+		return graph.getNodes().get(0);
+	}
+
     public FloorNode findNode(int x, int y) {
         for(FloorNode node : graph.getNodes()) {
             if (node.hasCoordinates(x, y))

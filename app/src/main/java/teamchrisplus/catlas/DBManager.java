@@ -74,7 +74,6 @@ public class DBManager extends SQLiteOpenHelper{
     {
         boolean populated = false;
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(NODE_TABLE, null, null);
         db.execSQL("create table if not exists "+NODE_TABLE+" (id integer primary key, "+NODE_BUILDING+" text, "+NODE_FLOOR+" integer, "+NODE_ID+" integer, "+NODE_COORDINATES+" text)");
         db.execSQL("create table if not exists "+ADJ_TABLE+" (id integer primary key, "+ADJ_BUILDING+" text, "+ADJ_FLOOR+" integer, "+ADJ_NODE_ONE+" integer, "+ADJ_NODE_TWO+" integer)");
         db.execSQL("create table if not exists "+BUILDING_TABLE+" (id integer primary key, "+BUILDING_BUILDING+" text, "+BUILDING_FLOOR+" integer, "+BUILDING_ABREVIATION+" text, "+BUILDING_IMAGE+" text)");
