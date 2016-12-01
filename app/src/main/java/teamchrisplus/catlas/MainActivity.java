@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         routeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setDestinationNode(destinationNode);
+                setDestinationNode(floor.findNode(roomX, roomY));
             }
         });
         Button startButton = (Button) pw.getContentView().findViewById(R.id.start_button);
