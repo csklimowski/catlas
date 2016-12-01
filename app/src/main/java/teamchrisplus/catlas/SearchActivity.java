@@ -4,14 +4,17 @@ import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
-
+import android.widget.ListView;
 import java.util.ArrayList;
 
 import teamchrisplus.model.DBRoom;
 
 
 public class SearchActivity extends ListActivity {
+
+    private ArrayList<DBRoom> results;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +27,7 @@ public class SearchActivity extends ListActivity {
         query = query.toLowerCase();
         DBManager db = new DBManager(this);
         ArrayList<DBRoom> rooms = db.getAllRooms();
-        ArrayList<DBRoom> results = new ArrayList<>();
+        results = new ArrayList<>();
 
         for(final DBRoom room : rooms) {
             if (room.get_name().toLowerCase().contains(query)) {
@@ -33,7 +36,6 @@ public class SearchActivity extends ListActivity {
         }
         ArrayList<String> roomNames = new ArrayList<>();
 
-        //Populate the list with all the rooms from the database
         for (int i = 0; i < results.size(); i++){
             roomNames.add(results.get(i).get_name());
         }
@@ -58,4 +60,17 @@ public class SearchActivity extends ListActivity {
             searchRooms(query);
         }
     }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        DBRoom selectedResult = results.get(position);
+        Intent intent = new Intent();
+        intent.putExtra("floor", selectedResult.get_floor());
+        intent.putExtra("number", selectedResult.get_number());
+        intent.setClass(SearchActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+        finish();
+    }
+
 }

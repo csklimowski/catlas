@@ -2,11 +2,14 @@ package teamchrisplus.catlas;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Rect;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
@@ -16,10 +19,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.PopupWindow;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -131,6 +136,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         myTextView.setText(floor.getName());
 
         handleIntent(getIntent());
+    }
+
+    public void setFloor(int floorNum) {
+        // empty for now
     }
 
     @Override
@@ -336,6 +345,21 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             searchRooms(query);
+        } else if (intent.hasExtra("floor")) {
+            setFloor(intent.getIntExtra("floor", 2));
+            int selectedNumber = intent.getIntExtra("number", 0);
+            DBRoom selectedRoom = null;
+            for (DBRoom room : floor.getRooms()) {
+                if (room.get_number() == selectedNumber)
+                    selectedRoom = room;
+            }
+            if (selectedRoom != null) {
+                Rect currentRect = selectedRoom.getRoomRect();
+                hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
+                hView.scrollTo(currentRect.left - 100, 0);
+                selectNode(selectedRoom.getCenterX(), selectedRoom.getCenterY());
+                showPopupWindow(selectedRoom);
+            }
         }
     }
 }
