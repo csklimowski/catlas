@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         //floor = load.getFloor("GS Floor 9");
 
         db = new DBManager(this);
-        db.populate();
         ArrayList<DBRoom> rooms = db.getAllRooms();
         db.close();
 
@@ -149,9 +148,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         sourceNode = node6;
 
-
         //floor = new Floor("Gould Simpson : Floor 9 : ", rooms, graph);
-        floor = db.getFloor("Gould Simpson", 9);
+        Bundle b2 = getIntent().getExtras();
+        floor = db.getFloor(b2.getString("buildingName"), b2.getInt("floorNumber"));
+        host.setCurrentTabByTag(b2.getInt("floorNumber") +"");
 
         TextView myTextView = (TextView) findViewById(R.id.my_textView);
         myTextView.setText(floor.getName());

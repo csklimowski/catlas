@@ -18,10 +18,15 @@ import java.util.ArrayList;
 
 public class FrontScreenActivity extends AppCompatActivity {
 
+    DBManager db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.front_screen);
+
+        db = new DBManager(this);
+        db.populate();
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) findViewById(R.id.buildingSearch);
