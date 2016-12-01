@@ -72,5 +72,4 @@ public class SearchActivity extends ListActivity {
         startActivity(intent);
         finish();
     }
-
 }

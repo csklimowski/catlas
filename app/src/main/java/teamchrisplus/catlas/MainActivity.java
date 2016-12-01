@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.PopupWindow;
 
@@ -40,7 +41,7 @@ import teamchrisplus.model.Room;
 import teamchrisplus.view.HighlightView;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener, TabHost.OnTabChangeListener  {
 
     private HighlightView hView;
     private Floor floor;
@@ -55,6 +56,21 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         setContentView(R.layout.activity_main);
         hView = (HighlightView) findViewById(R.id.my_highlightView);
         hView.setOnTouchListener(this);
+
+        TabHost host = (TabHost)findViewById(R.id.tabHost_floors);
+        host.setOnTabChangedListener(this);
+        host.setup();
+
+        //Tab 1
+        TabHost.TabSpec spec = host.newTabSpec("2");
+        spec.setContent(R.id.tab1);
+        spec.setIndicator("Floor 2");
+        host.addTab(spec);
+
+        spec = host.newTabSpec("9");
+        spec.setContent(R.id.tab2);
+        spec.setIndicator("Floor 9");
+        host.addTab(spec);
 
         LoadFloors load = new LoadFloors();
         //floor = load.getFloor("GS Floor 9");
@@ -373,5 +389,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 showPopupWindow(selectedRoom);
             }
         }
+    }
+
+    @Override
+    public void onTabChanged(String tab) {
+        if (db == null) {
+            db = new DBManager(this);
+            db.populate();
+            db.close();
+        }
+        setFloor(Integer.parseInt(tab));
     }
 }
