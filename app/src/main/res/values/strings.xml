@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Catlas</string>
     <string name="catlas">Catlas</string>
+    <string name="title_activity_building_search">BuildingSearchActivity</string>
 </resources>
