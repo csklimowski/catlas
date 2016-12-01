@@ -21,14 +21,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.PopupWindow;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -36,7 +34,6 @@ import teamchrisplus.model.DBRoom;
 import teamchrisplus.model.Floor;
 import teamchrisplus.model.FloorGraph;
 import teamchrisplus.model.FloorNode;
-import teamchrisplus.model.DBRoom;
 import teamchrisplus.model.Room;
 import teamchrisplus.view.HighlightView;
 
@@ -49,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private FloorNode sourceNode;
     private ArrayList<Floor> floorList = new ArrayList<Floor>();
     private DBManager db;
+    private int downX = 0;
+    private int downY = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,26 +172,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int x = (int) event.getX() + hView.getScrollX();
-        int absoluteX = (int) event.getX() + hView.getScrollX();
-        int relativeX = (int) event.getX();
         int y = (int) event.getY();
-        Rect currentRect;
-        boolean inRoom = false;
-        FloorNode selectedNode;
-        Stack<FloorNode> path;
-        if(event.getAction() == MotionEvent.ACTION_UP) {
-            for (DBRoom room : floor.getRooms()) {
-                if (room.hasCoordinates((int) x, (int) y)) {
-                    inRoom = true;
-                    currentRect = room.getRoomRect();
-                    hView.setRect(currentRect.left, currentRect.top, currentRect.right, currentRect.bottom);
-                    selectRoom(x, y);
-                    showPopupWindow(room);
-                }
-            }
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            downX = x;
+            downY = y;
         }
 
-        if(event.getAction() == MotionEvent.ACTION_UP) {
+        if(event.getAction() == MotionEvent.ACTION_UP && Math.abs(x - downX) < 10 && Math.abs(y - downY) < 10) {
             selectRoom(x, y);
             selectNode(x, y);
         }
